@@ -1,0 +1,27 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /frontend/birmarket-web
+    schedule:
+      interval: weekly
+    groups:
+      angular-and-tooling:
+        patterns:
+          - "@angular/*"
+          - "*"
+  - package-ecosystem: nuget
+    directory: /backend/Birmarket.Api
+    schedule:
+      interval: weekly
+  - package-ecosystem: nuget
+    directory: /tests/Birmarket.Tests
+    schedule:
+      interval: weekly
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      github-actions:
+        patterns:
+          - "*"

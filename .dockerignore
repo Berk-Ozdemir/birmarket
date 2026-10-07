@@ -1,0 +1,15 @@
+.git
+.data
+.angular
+**/node_modules
+**/bin
+**/obj
+**/dist
+**/coverage
+**/test-results
+**/playwright-report
+birmarket.env
+*.sqlite
+*.sqlite3
+*.sqlite-shm
+*.sqlite-wal

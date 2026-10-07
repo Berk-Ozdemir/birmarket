@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+message: "If you use Birmarket in your work, please cite this repository."
+title: "Birmarket"
+type: software
+authors:
+  - family-names: Ozdemir
+    given-names: Berk
+version: 0.0.0
+license: MIT
+repository-code: "https://github.com/berk-ozdemir/birmarket"

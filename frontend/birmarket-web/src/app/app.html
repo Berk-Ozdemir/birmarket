@@ -1,0 +1,1172 @@
+<div class="app-shell" [class.demo-mode]="demoBadge">
+  @if (demoBadge) {
+    <div class="demo-ribbon">
+      <span class="demo-pulse"></span> SİMÜLASYON MAĞAZASI <span>·</span> Bu ortamda ödeme ve kargo
+      adımları simüle edilir
+    </div>
+  } @else if (sandboxBadge) {
+    <div class="demo-ribbon sandbox-ribbon">
+      <span class="demo-pulse"></span> DENEME ÖDEME ORTAMI <span>·</span> Sağlayıcı işlemleri deneme
+      hesaplarıyla yapılır
+    </div>
+  }
+
+  <header class="site-header">
+    <a class="brand" href="#top" (click)="chooseView('shop')" aria-label="Birmarket ana sayfa">
+      <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+      <span>birmarket<span class="brand-period">.</span></span>
+    </a>
+
+    <nav class="main-nav" aria-label="Ana menü">
+      <button class="nav-link" [class.nav-active]="view === 'shop'" (click)="chooseView('shop')">
+        Mağaza
+      </button>
+      <button class="nav-link" (click)="selectCategory(null); chooseView('shop')">
+        Koleksiyonlar
+      </button>
+      <button
+        class="nav-link"
+        [class.nav-active]="view === 'order-result'"
+        (click)="trackGuestOrder()"
+      >
+        Sipariş takibi
+      </button>
+      @if (user) {
+        <button class="nav-link" [class.nav-active]="view === 'orders'" (click)="showOrders()">
+          Siparişlerim
+        </button>
+      }
+      @if (user?.isAdmin) {
+        <button
+          class="nav-link admin-nav"
+          [class.nav-active]="view === 'admin'"
+          (click)="showAdmin()"
+        >
+          Yönetim
+        </button>
+      }
+    </nav>
+
+    <div class="header-actions">
+      <label class="search-box" [class.search-open]="showMobileSearch" for="catalog-search">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="10.8" cy="10.8" r="6.8"></circle>
+          <path d="m16 16 4.5 4.5"></path>
+        </svg>
+        <input
+          id="catalog-search"
+          name="search"
+          type="search"
+          aria-label="Ürün ara"
+          placeholder="Ürün ara"
+          [(ngModel)]="searchTerm"
+          (ngModelChange)="loadCatalog()"
+        />
+      </label>
+      <button
+        class="icon-button mobile-search-button"
+        aria-label="Aramayı aç"
+        (click)="showMobileSearch = !showMobileSearch"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="10.8" cy="10.8" r="6.8"></circle>
+          <path d="m16 16 4.5 4.5"></path>
+        </svg>
+      </button>
+      @if (user) {
+        <button
+          class="icon-button account-button"
+          (click)="showOrders()"
+          [attr.aria-label]="user.displayName + ' hesabı'"
+        >
+          <span class="avatar">{{ user.displayName.charAt(0) }}</span>
+        </button>
+      } @else {
+        <button class="icon-button" aria-label="Hesabım" (click)="openAuth('login')">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="8" r="3.4"></circle>
+            <path d="M5.5 20c.6-3.4 2.9-5.2 6.5-5.2s5.9 1.8 6.5 5.2"></path>
+          </svg>
+        </button>
+      }
+      <button class="bag-button" aria-label="Sepeti aç" (click)="showCart = true">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M5 8h14l1 12H4L5 8Z"></path>
+          <path d="M9 9V6a3 3 0 0 1 6 0v3"></path>
+        </svg>
+        <span>Sepet</span><b>{{ cartCount }}</b>
+      </button>
+    </div>
+  </header>
+
+  @if (view === 'shop') {
+    <main id="top">
+      <section class="hero-section">
+        <div class="hero-copy">
+          <div class="eyebrow"><span></span> İyi hissettiren küçük seçimler</div>
+          <h1>Günün güzel<br /><em>bir şeyle</em> başlasın.</h1>
+          <p>Yaşamına eşlik edecek, özenle seçilmiş parçalar. Her gün biraz daha kendin gibi.</p>
+          <div class="hero-actions">
+            <button class="button button-dark" (click)="selectCategory(null); scrollToCatalog()">
+              Koleksiyonu keşfet <span>↗</span>
+            </button>
+            <div class="hero-note">
+              <span class="note-stars">★★★★★</span><span>Sevgiyle seçildi</span>
+            </div>
+          </div>
+        </div>
+        <div class="hero-art" aria-label="Birmarket seçkisi">
+          <div class="hero-sun"></div>
+          <div class="hero-vase">
+            <div class="vase-neck"></div>
+            <div class="vase-body"></div>
+            <div class="vase-stem stem-one"></div>
+            <div class="vase-stem stem-two"></div>
+            <div class="vase-leaf leaf-one"></div>
+            <div class="vase-leaf leaf-two"></div>
+          </div>
+          <div class="hero-art-caption"><span>01 / 03</span><span>Günün seçkisi</span><i>↗</i></div>
+          <div class="hero-float-card">
+            <span class="float-star">✳</span><span>Özenle<br />seçildi</span>
+          </div>
+        </div>
+        <div class="hero-index">BİR · MARKET <span>2025’TEN BERİ</span></div>
+      </section>
+
+      <section class="benefits-strip" aria-label="Mağaza avantajları">
+        <div><span class="benefit-icon">✳</span><span>Özenle seçilmiş ürünler</span></div>
+        <div><span class="benefit-icon">↗</span><span>1.500 TL üzeri ücretsiz kargo</span></div>
+        <div><span class="benefit-icon">♡</span><span>Güvenli ödeme seçenekleri</span></div>
+        <div><span class="benefit-icon">◌</span><span>Kolay sipariş takibi</span></div>
+      </section>
+
+      <section class="catalog-section" id="catalog">
+        <div class="section-heading">
+          <div>
+            <div class="eyebrow">Birmarket seçkisi</div>
+            <h2>İyi şeyler <em>burada.</em></h2>
+          </div>
+          <p>Her biri günlük hayatına küçük bir güzellik katsın diye.</p>
+        </div>
+        <div class="catalog-toolbar">
+          <div class="category-filters" role="group" aria-label="Ürün kategorileri">
+            <button
+              [class.filter-active]="selectedCategoryId === null"
+              (click)="selectCategory(null)"
+            >
+              Tümü
+            </button>
+            @for (category of categories; track category.id) {
+              <button
+                [class.filter-active]="selectedCategoryId === category.id"
+                (click)="selectCategory(category.id)"
+              >
+                {{ category.name }}
+              </button>
+            }
+          </div>
+          <label class="sort-select"
+            >Sırala
+            <select name="sort" [(ngModel)]="sort" (ngModelChange)="loadCatalog()">
+              <option value="featured">Öne çıkanlar</option>
+              <option value="price-asc">Fiyat: artan</option>
+              <option value="price-desc">Fiyat: azalan</option>
+              <option value="name">İsme göre</option>
+            </select>
+          </label>
+        </div>
+
+        @if (loading) {
+          <div class="loading-grid" aria-label="Ürünler yükleniyor">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+          </div>
+        } @else if (products.length === 0) {
+          <div class="empty-catalog">
+            <span>⌕</span>
+            <h3>Aradığını bulamadık.</h3>
+            <p>Başka bir kelime deneyebilir veya tüm ürünlere göz atabilirsin.</p>
+            <button class="button button-outline" (click)="searchTerm = ''; selectCategory(null)">
+              Tüm ürünleri gör
+            </button>
+          </div>
+        } @else {
+          <div class="product-grid">
+            @for (product of products; track product.id) {
+              <article class="product-card" (click)="selectedProduct = product">
+                <div class="product-visual tone-{{ product.imageTone }}">
+                  @if (product.imageUrl) {
+                    <img [src]="product.imageUrl" [alt]="product.name" loading="lazy" />
+                  } @else {
+                    <div class="product-art" aria-hidden="true">
+                      <span>{{ productInitial(product) }}</span
+                      ><i></i><b></b>
+                    </div>
+                  }
+                  @if (product.isFeatured) {
+                    <span class="product-tag">BİRMARKET SEÇİMİ</span>
+                  }
+                  @if (product.compareAtPrice && product.compareAtPrice > product.price) {
+                    <span class="discount-tag"
+                      >{{ 100 - (product.price / product.compareAtPrice) * 100 | number: '1.0-0' }}%
+                      avantaj</span
+                    >
+                  }
+                  <button
+                    class="favorite-button"
+                    [class.favorite-active]="wishlistIds.has(product.id)"
+                    (click)="toggleWishlist(product, $event)"
+                    [attr.aria-label]="
+                      wishlistIds.has(product.id) ? 'Favorilerden çıkar' : 'Favorilere ekle'
+                    "
+                  >
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path
+                        d="M20.8 8.8c0 5.2-8.8 10.3-8.8 10.3S3.2 14 3.2 8.8a4.7 4.7 0 0 1 8-3.3l.8.8.8-.8a4.7 4.7 0 0 1 8 3.3Z"
+                      ></path>
+                    </svg>
+                  </button>
+                  <button
+                    class="quick-add"
+                    [disabled]="product.stock === 0"
+                    (click)="addToCart(product); $event.stopPropagation()"
+                  >
+                    {{ product.stock ? 'Sepete ekle' : 'Tükendi' }} <span>+</span>
+                  </button>
+                </div>
+                <div class="product-info">
+                  <div class="product-category">{{ product.category }}</div>
+                  <div class="product-title-row">
+                    <h3>{{ product.name }}</h3>
+                    <span class="product-rating">✳ 4.9</span>
+                  </div>
+                  <p class="product-description">{{ product.description }}</p>
+                  <div class="product-price-row">
+                    <strong>{{
+                      product.price | currency: 'TRY' : 'symbol' : '1.0-0' : 'tr-TR'
+                    }}</strong>
+                    @if (product.compareAtPrice && product.compareAtPrice > product.price) {
+                      <del>{{
+                        product.compareAtPrice | currency: 'TRY' : 'symbol' : '1.0-0' : 'tr-TR'
+                      }}</del>
+                    }
+                    <span class="stock-note" [class.stock-low]="product.stock < 5">{{
+                      product.stock === 0
+                        ? 'Tükendi'
+                        : product.stock < 5
+                          ? 'Son ' + product.stock + ' ürün'
+                          : 'Stokta'
+                    }}</span>
+                  </div>
+                </div>
+              </article>
+            }
+          </div>
+        }
+      </section>
+
+      <section class="story-section">
+        <div class="story-art">
+          <div class="story-orbit orbit-one"></div>
+          <div class="story-orbit orbit-two"></div>
+          <div class="story-product">
+            <span>iyi<br />yaşa</span>
+          </div>
+          <span class="story-side-note">GÜZEL ŞEYLER<br />GÜZEL HİSSETTİRİR</span>
+        </div>
+        <div class="story-copy">
+          <div class="eyebrow">Birmarket’in notu</div>
+          <h2>Güzel olan,<br /><em>iyi hissettirir.</em></h2>
+          <p>
+            Birmarket’te her ürünün küçük bir hikâyesi var. Kendine, evine ya da sevdiğin birine…
+            Güzel şeyleri seninle buluşturmak için buradayız.
+          </p>
+          <button class="text-link" (click)="selectCategory(null); scrollToCatalog()">
+            Seçkiyi keşfet <span>↗</span>
+          </button>
+        </div>
+      </section>
+
+      <section class="newsletter-section">
+        <div class="newsletter-mark">✳</div>
+        <div>
+          <div class="eyebrow">Birmarket’ten küçük bir not</div>
+          <h2>Güzel şeylerden <em>haberdar ol.</em></h2>
+          <p>Siparişlerini ve favorilerini tek yerden takip etmek için hesabını oluştur.</p>
+        </div>
+        <button class="button button-dark" (click)="openAuth('register')">
+          Hesap oluştur <span>↗</span>
+        </button>
+      </section>
+    </main>
+  }
+
+  @if (view === 'orders') {
+    <main class="page-shell account-page">
+      <div class="eyebrow">Hesabım</div>
+      <div class="page-title-row">
+        <h1>Siparişlerin <em>ve yolculukları.</em></h1>
+        <button class="text-link" (click)="signOut()">Çıkış yap ↗</button>
+      </div>
+      <div class="account-welcome">Merhaba, {{ user?.displayName }}.</div>
+      @if (orders.length === 0) {
+        <div class="empty-panel">
+          <span>✳</span>
+          <h2>İlk siparişin seni bekliyor.</h2>
+          <button class="button button-dark" (click)="chooseView('shop')">Mağazaya dön</button>
+        </div>
+      } @else {
+        <div class="orders-list">
+          @for (order of orders; track order.number) {
+            <article class="order-card">
+              <div class="order-card-top">
+                <div>
+                  <span class="order-number">{{ order.number }}</span
+                  ><span class="order-date">{{
+                    order.createdAt | date: 'd MMMM y' : '' : 'tr-TR'
+                  }}</span>
+                </div>
+                <span class="status-pill" [class.status-good]="order.paymentStatus === 'Paid'">{{
+                  order.paymentStatus === 'Paid' ? 'Ödeme alındı' : orderStatusLabel(order.status)
+                }}</span>
+              </div>
+              <div class="order-items">
+                @for (item of order.items; track item.productName) {
+                  <span>{{ item.productName }} × {{ item.quantity }}</span>
+                }
+              </div>
+              <div class="order-card-bottom">
+                <span>{{ order.total | currency: 'TRY' : 'symbol' : '1.2-2' : 'tr-TR' }}</span
+                ><span>{{
+                  order.trackingNumber
+                    ? 'Takip: ' + order.trackingNumber
+                    : 'Kargo: ' + shippingStatusLabel(order.shippingStatus)
+                }}</span>
+              </div>
+            </article>
+          }
+        </div>
+      }
+    </main>
+  }
+
+  @if (view === 'admin') {
+    <main class="page-shell admin-page">
+      <div class="eyebrow">Birmarket · Yönetim</div>
+      <div class="page-title-row">
+        <h1>İşler <em>yolunda.</em></h1>
+        <button class="text-link" (click)="chooseView('shop')">Mağazayı gör ↗</button>
+      </div>
+      <div class="admin-metrics">
+        <article>
+          <span>Aktif ürün</span><strong>{{ adminSummary.products }}</strong
+          ><i>✳</i>
+        </article>
+        <article>
+          <span>Azalan stok</span><strong>{{ adminSummary.lowStock }}</strong
+          ><i>◌</i>
+        </article>
+        <article>
+          <span>Hazırlanacak</span><strong>{{ adminSummary.pendingOrders }}</strong
+          ><i>↗</i>
+        </article>
+        <article>
+          <span>Ödenen sipariş</span
+          ><strong>{{
+            adminSummary.revenue | currency: 'TRY' : 'symbol' : '1.0-0' : 'tr-TR'
+          }}</strong
+          ><i>₺</i>
+        </article>
+      </div>
+      <div class="admin-section-head">
+        <h2>Siparişler</h2>
+        <span>Son 200 sipariş</span>
+      </div>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Sipariş</th>
+              <th>Müşteri</th>
+              <th>Durum</th>
+              <th>Ödeme</th>
+              <th>Toplam</th>
+              <th>Güncelle</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (order of adminOrders; track order.number) {
+              <tr>
+                <td>
+                  <strong>{{ order.number }}</strong
+                  ><small>{{ order.createdAt | date: 'd MMM y' }}</small>
+                </td>
+                <td>
+                  {{ order.customerName }}<small>{{ order.customerEmail }}</small>
+                </td>
+                <td>
+                  <span class="status-pill">{{ orderStatusLabel(order.status) }}</span
+                  ><small>{{
+                    order.trackingNumber || shippingStatusLabel(order.shippingStatus)
+                  }}</small>
+                </td>
+                <td>{{ paymentStatusLabel(order.paymentStatus) }}</td>
+                <td>{{ order.total | currency: 'TRY' : 'symbol' : '1.0-0' : 'tr-TR' }}</td>
+                <td>
+                  <select
+                    [ngModel]="order.status"
+                    (ngModelChange)="updateAdminStatus(order, $event)"
+                    [attr.aria-label]="order.number + ' sipariş durumu'"
+                  >
+                    <option value="Processing">Hazırlanıyor</option>
+                    <option value="Packed">Paketlendi</option>
+                    <option value="Shipped">Kargoda</option>
+                    <option value="Delivered">Teslim edildi</option>
+                  </select>
+                  <div class="admin-row-actions">
+                    <button (click)="retryShipment(order)">Kargoyu oluştur</button
+                    ><button (click)="resendConfirmation(order)">E-postayı gönder</button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      <div class="admin-section-head">
+        <h2>Yeni ürün</h2>
+        <span>Seçkine yeni bir parça ekle</span>
+      </div>
+      <form class="admin-editor" (ngSubmit)="createAdminProduct()">
+        <label>Ürün adı<input name="productName" required [(ngModel)]="productDraft.name" /></label
+        ><label>Ürün kodu<input name="productSku" required [(ngModel)]="productDraft.sku" /></label
+        ><label
+          >Kategori<select name="productCategory" required [(ngModel)]="productDraft.categoryId">
+            @for (category of categories; track category.id) {
+              <option [ngValue]="category.id">{{ category.name }}</option>
+            }
+          </select></label
+        ><label
+          >Fiyat (TL)<input
+            name="productPrice"
+            type="number"
+            min="0"
+            step="0.01"
+            required
+            [(ngModel)]="productDraft.price" /></label
+        ><label
+          >Stok<input
+            name="productStock"
+            type="number"
+            min="0"
+            required
+            [(ngModel)]="productDraft.stock" /></label
+        ><label
+          >Görsel tonu<select name="imageTone" [(ngModel)]="productDraft.imageTone">
+            <option value="clay">Kil</option>
+            <option value="sea">Deniz</option>
+            <option value="rose">Gül</option>
+            <option value="sage">Adaçayı</option>
+            <option value="blue">Mavi</option>
+            <option value="cream">Krem</option>
+          </select></label
+        ><label class="editor-wide"
+          >Açıklama<textarea
+            name="productDescription"
+            rows="2"
+            [(ngModel)]="productDraft.description"
+          ></textarea></label
+        ><label class="check-field"
+          ><input type="checkbox" name="productFeatured" [(ngModel)]="productDraft.isFeatured" />
+          Öne çıkan ürün</label
+        ><button class="button button-dark" type="submit">Ürünü ekle <span>↗</span></button>
+      </form>
+      <div class="admin-compact-editors">
+        <form class="admin-mini-form" (ngSubmit)="createAdminCategory()">
+          <div>
+            <h3>Yeni kategori</h3>
+            <p>Koleksiyona bir bölüm ekle.</p>
+          </div>
+          <label
+            >Kategori adı<input
+              name="categoryName"
+              required
+              [(ngModel)]="categoryDraft.name" /></label
+          ><label
+            >Açıklama<input
+              name="categoryDescription"
+              [(ngModel)]="categoryDraft.description" /></label
+          ><button class="button button-outline button-small" type="submit">Kategori ekle</button>
+        </form>
+        <form class="admin-mini-form" (ngSubmit)="createAdminCoupon()">
+          <div>
+            <h3>İndirim kodu</h3>
+            <p>Mağaza için yeni bir teklif oluştur.</p>
+          </div>
+          <label>Kod<input name="couponCode" required [(ngModel)]="couponDraft.code" /></label
+          ><label
+            >İndirim %<input
+              name="couponPercent"
+              type="number"
+              min="1"
+              max="99"
+              [(ngModel)]="couponDraft.percentOff" /></label
+          ><button class="button button-outline button-small" type="submit">Kodu ekle</button>
+        </form>
+      </div>
+      <div class="admin-section-head">
+        <h2>Ürün ve stok</h2>
+        <span>Ürün kartlarından stoğu güncelle</span>
+      </div>
+      <div class="stock-list">
+        @for (product of adminProducts; track product.id) {
+          <article>
+            <span class="stock-swatch tone-{{ product.imageTone }}">{{
+              productInitial(product)
+            }}</span>
+            <div>
+              <strong>{{ product.name }}</strong
+              ><small
+                >{{ product.sku }} ·
+                {{ product.price | currency: 'TRY' : 'symbol' : '1.0-0' : 'tr-TR' }}</small
+              >
+            </div>
+            <span class="stock-count" [class.stock-low]="product.stock < 5"
+              >{{ product.stock }} adet</span
+            ><button class="button button-outline button-small" (click)="adjustStock(product)">
+              Stoku düzenle</button
+            ><button class="button button-outline button-small" (click)="adjustPrice(product)">
+              Fiyatı düzenle
+            </button>
+          </article>
+        }
+      </div>
+    </main>
+  }
+
+  @if (view === 'order-result') {
+    <main class="page-shell result-page">
+      <div class="result-icon">{{ trackedOrder?.paymentStatus === 'Paid' ? '✓' : '✳' }}</div>
+      <div class="eyebrow">
+        {{ trackedOrder?.paymentStatus === 'Paid' ? 'Siparişin güvende' : 'Sipariş durumu' }}
+      </div>
+      <h1>
+        {{ trackedOrder?.paymentStatus === 'Paid' ? 'Güzel bir seçim.' : 'Her şey yolunda mı?' }}
+      </h1>
+      <p>{{ orderResultMessage }}</p>
+      @if (trackingNumber) {
+        <div class="tracking-card">
+          <span>SİPARİŞ NUMARASI</span><strong>{{ trackingNumber }}</strong>
+          @if (trackedOrder) {
+            <div class="tracking-facts">
+              <span
+                >Ödeme <b>{{ paymentStatusLabel(trackedOrder.paymentStatus) }}</b></span
+              ><span
+                >Kargo
+                <b>{{
+                  trackedOrder.trackingNumber || shippingStatusLabel(trackedOrder.shippingStatus)
+                }}</b></span
+              ><span
+                >Toplam
+                <b>{{
+                  trackedOrder.total | currency: 'TRY' : 'symbol' : '1.2-2' : 'tr-TR'
+                }}</b></span
+              >
+            </div>
+          }
+        </div>
+      }
+      @if (trackedOrder?.trackingNumber) {
+        <p class="tracking-live">
+          Kargo takip numaran: <strong>{{ trackedOrder.trackingNumber }}</strong>
+        </p>
+      }
+      @if (!user && !trackedOrder) {
+        <div class="tracking-form">
+          <label
+            >Sipariş numarası<input
+              [(ngModel)]="trackingNumber"
+              placeholder="BM261007-A1B2C3D4E5F60708" /></label
+          ><label
+            >E-posta adresi<input
+              type="email"
+              [(ngModel)]="trackingEmail"
+              placeholder="ornek@eposta.com" /></label
+          ><button class="button button-dark" (click)="trackOrder()">Siparişimi bul</button>
+        </div>
+      }
+      <button class="button button-dark" (click)="chooseView('shop')">
+        Mağazaya dön <span>↗</span>
+      </button>
+    </main>
+  }
+
+  <footer class="site-footer">
+    <div class="footer-top">
+      <a class="brand footer-brand" href="#top" (click)="chooseView('shop')"
+        ><span class="brand-mark"><i></i><i></i><i></i></span
+        ><span>birmarket<span class="brand-period">.</span></span></a
+      >
+      <p>İyi hissettiren küçük seçimler.</p>
+      <div class="footer-links">
+        <button (click)="chooseView('shop')">Mağaza</button
+        ><button (click)="trackGuestOrder()">Sipariş takibi</button
+        ><button (click)="openAuth('login')">Hesabım</button>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Birmarket. Sevgiyle seçildi.</span
+      ><span>Güzel şeyler, güzel hissettirir. <b>✳</b></span
+      ><span class="footer-mode">{{
+        demoBadge ? 'SİMÜLASYON ORTAMI' : sandboxBadge ? 'DENEME ORTAMI' : 'GÜVENLİ MAĞAZA'
+      }}</span>
+    </div>
+  </footer>
+
+  @if (showCart || showAuth || showCheckout || selectedProduct) {
+    <button class="overlay-backdrop" aria-label="Kapat" (click)="closeOverlays()"></button>
+  }
+
+  @if (showCart) {
+    <aside class="cart-drawer" role="dialog" aria-modal="true" aria-labelledby="cart-title">
+      <div class="drawer-head">
+        <div>
+          <div class="eyebrow">Birmarket sepeti</div>
+          <h2 id="cart-title">
+            Sepetin <em>({{ cartCount }})</em>
+          </h2>
+        </div>
+        <button class="close-button" aria-label="Sepeti kapat" (click)="showCart = false">×</button>
+      </div>
+      @if (!cart.length) {
+        <div class="cart-empty">
+          <span>✳</span>
+          <h3>Sepetin biraz boş.</h3>
+          <p>İyi hissettiren bir şeyler keşfedelim mi?</p>
+          <button class="button button-dark" (click)="showCart = false; chooseView('shop')">
+            Mağazaya dön
+          </button>
+        </div>
+      } @else {
+        @if (amountToFreeShipping > 0) {
+          <div class="shipping-progress">
+            <span
+              >{{ amountToFreeShipping | currency: 'TRY' : 'symbol' : '1.0-0' : 'tr-TR' }} daha
+              ekle, kargon bizden.</span
+            >
+            <div><i [style.width.%]="shippingProgressPercent"></i></div>
+          </div>
+        } @else {
+          <div class="shipping-free">✳ Harika! Kargon bizden.</div>
+        }
+        <div class="cart-lines">
+          @for (line of cart; track line.product.id) {
+            <article class="cart-line">
+              <div class="cart-thumb tone-{{ line.product.imageTone }}">
+                <span>{{ productInitial(line.product) }}</span>
+              </div>
+              <div class="cart-line-info">
+                <span class="product-category">{{ line.product.category }}</span
+                ><strong>{{ line.product.name }}</strong
+                ><span>{{
+                  line.product.price | currency: 'TRY' : 'symbol' : '1.0-0' : 'tr-TR'
+                }}</span>
+                <div class="quantity-control">
+                  <button
+                    [attr.aria-label]="line.product.name + ' adedini azalt'"
+                    (click)="changeQuantity(line, -1)"
+                  >
+                    −</button
+                  ><span>{{ line.quantity }}</span
+                  ><button
+                    [attr.aria-label]="line.product.name + ' adedini artır'"
+                    (click)="changeQuantity(line, 1)"
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+              <button
+                class="remove-line"
+                [attr.aria-label]="line.product.name + ' ürününü sil'"
+                (click)="removeFromCart(line)"
+              >
+                ×
+              </button>
+            </article>
+          }
+        </div>
+        <div class="coupon-entry">
+          <label for="coupon-code">Bir indirim kodun var mı?</label>
+          <div>
+            <input id="coupon-code" [(ngModel)]="couponInput" placeholder="Örn. MERHABA10" /><button
+              (click)="couponApplied ? removeCoupon() : applyCoupon()"
+            >
+              {{ couponApplied ? 'Kaldır' : 'Uygula' }}
+            </button>
+          </div>
+          @if (couponApplied) {
+            <small class="coupon-success"
+              >{{ couponApplied }} kodu eklendi · %{{ couponPercent }} indirim</small
+            >
+          }
+        </div>
+        <div class="drawer-total">
+          <div>
+            <span>Ara toplam</span
+            ><span>{{ subtotal | currency: 'TRY' : 'symbol' : '1.2-2' : 'tr-TR' }}</span>
+          </div>
+          @if (discount) {
+            <div>
+              <span>İndirim</span
+              ><span>−{{ discount | currency: 'TRY' : 'symbol' : '1.2-2' : 'tr-TR' }}</span>
+            </div>
+          }
+          <div>
+            <span>Kargo</span
+            ><span>{{
+              shipping === 0
+                ? 'Ücretsiz'
+                : (shipping | currency: 'TRY' : 'symbol' : '1.2-2' : 'tr-TR')
+            }}</span>
+          </div>
+          <div class="grand-total">
+            <strong>Toplam</strong
+            ><strong>{{ total | currency: 'TRY' : 'symbol' : '1.2-2' : 'tr-TR' }}</strong>
+          </div>
+        </div>
+        <button class="button button-dark checkout-cta" (click)="startCheckout()">
+          Alışverişi tamamla <span>↗</span>
+        </button>
+        <div class="secure-note"><span>◇</span> Güvenli ödeme · Kolay sipariş takibi</div>
+      }
+    </aside>
+  }
+
+  @if (showCheckout) {
+    <section
+      class="modal-card checkout-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="checkout-title"
+    >
+      <div class="drawer-head">
+        <div>
+          <div class="eyebrow">
+            {{
+              paymentStage === 'demo'
+                ? 'Ödeme canlandırması'
+                : paymentStage === 'provider'
+                  ? 'Güvenli ödeme formu'
+                  : 'Son bir adım'
+            }}
+          </div>
+          <h2 id="checkout-title">
+            {{
+              paymentStage === 'demo'
+                ? 'Ödeme nasıl sonuçlansın?'
+                : paymentStage === 'provider'
+                  ? 'Ödemeni tamamla'
+                  : 'Sipariş bilgileri'
+            }}
+          </h2>
+        </div>
+        <button class="close-button" aria-label="Kapat" (click)="closeOverlays()">×</button>
+      </div>
+      @if (paymentStage === 'demo' && checkoutResult) {
+        <div class="demo-payment-card">
+          <div class="demo-payment-brand">
+            <span class="demo-brand-icon">✳</span>
+            <div>
+              <strong>{{ checkout.provider === 'iyzico' ? 'iyzico' : 'PayTR' }}</strong
+              ><small>Örnek ödeme ekranı</small>
+            </div>
+            <span class="demo-chip">DENEME</span>
+          </div>
+          <div class="demo-payment-amount">
+            <span>Sipariş tutarı</span
+            ><strong>{{
+              checkoutResult.total | currency: 'TRY' : 'symbol' : '1.2-2' : 'tr-TR'
+            }}</strong>
+          </div>
+          <div class="demo-card-preview">
+            <span>•••• &nbsp; •••• &nbsp; •••• &nbsp; 2048</span><small>ÖRNEK KART · 12/30</small>
+          </div>
+          <p>Bu simülasyonda gerçek kart bilgisi alınmaz ve gerçek tahsilat yapılmaz.</p>
+          <div class="demo-choice">
+            <button
+              class="button button-dark"
+              [disabled]="submitting"
+              (click)="settleDemoPayment(true)"
+            >
+              Ödemeyi başarılı göster <span>✓</span></button
+            ><button
+              class="button button-outline"
+              [disabled]="submitting"
+              (click)="settleDemoPayment(false)"
+            >
+              Başarısız ödeme göster
+            </button>
+          </div>
+        </div>
+      } @else if (paymentStage === 'provider' && paymentFrameUrl) {
+        <div class="provider-frame-note">
+          Kart bilgilerin ödeme sağlayıcısının güvenli formunda işlenir.
+        </div>
+        <iframe
+          class="payment-frame"
+          [src]="paymentFrameUrl"
+          title="Ödeme sağlayıcısı güvenli ödeme formu"
+          allow="payment"
+          referrerpolicy="strict-origin-when-cross-origin"
+        ></iframe>
+      } @else {
+        <form class="checkout-form" (ngSubmit)="submitCheckout()">
+          <div class="checkout-progress">
+            <span class="progress-active">01 <b>Teslimat</b></span
+            ><i></i><span>02 <b>Ödeme</b></span
+            ><i></i><span>03 <b>Onay</b></span>
+          </div>
+          <div class="form-section-title">
+            <span>1</span>
+            <div>
+              <strong>Teslimat bilgileri</strong><small>Siparişini ulaştırabilmemiz için</small>
+            </div>
+          </div>
+          @if (user && addresses.length > 0) {
+            <label class="saved-address-field"
+              >Kayıtlı adres<select
+                name="savedAddress"
+                [ngModel]="selectedAddressId"
+                (ngModelChange)="selectSavedAddress($event)"
+              >
+                <option [ngValue]="null">Yeni adres kullan</option>
+                @for (address of addresses; track address.id) {
+                  <option [ngValue]="address.id">
+                    {{ address.label }} · {{ address.city }}, {{ address.district }}
+                  </option>
+                }
+              </select></label
+            >
+          }
+          <div class="form-grid">
+            <label class="field-wide"
+              >Ad soyad<input
+                name="customerName"
+                autocomplete="name"
+                required
+                maxlength="120"
+                [(ngModel)]="checkout.customerName"
+                placeholder="Adın ve soyadın" /></label
+            ><label
+              >E-posta<input
+                name="email"
+                type="email"
+                autocomplete="email"
+                required
+                [(ngModel)]="checkout.customerEmail"
+                placeholder="ornek@eposta.com" /></label
+            ><label
+              >Telefon<input
+                name="phone"
+                type="tel"
+                autocomplete="tel"
+                required
+                [(ngModel)]="checkout.customerPhone"
+                placeholder="05xx xxx xx xx" /></label
+            ><label class="field-wide"
+              >Açık adres<input
+                name="address"
+                autocomplete="street-address"
+                required
+                [(ngModel)]="checkout.addressLine"
+                placeholder="Mahalle, sokak, bina ve daire" /></label
+            ><label
+              >İl<input
+                name="city"
+                autocomplete="address-level1"
+                required
+                [(ngModel)]="checkout.city"
+                placeholder="İstanbul" /></label
+            ><label
+              >İlçe<input
+                name="district"
+                autocomplete="address-level2"
+                required
+                [(ngModel)]="checkout.district"
+                placeholder="Kadıköy" /></label
+            ><label
+              >Posta kodu<input
+                name="postal"
+                autocomplete="postal-code"
+                [(ngModel)]="checkout.postalCode"
+                placeholder="34000" /></label
+            ><label class="field-wide"
+              >Teslimat notu <span class="optional">İsteğe bağlı</span
+              ><textarea
+                name="notes"
+                rows="2"
+                [(ngModel)]="checkout.notes"
+                placeholder="Kurye için kısa bir not"
+              ></textarea>
+            </label>
+          </div>
+          @if (user) {
+            <label class="save-address-check"
+              ><input type="checkbox" name="saveAddress" [(ngModel)]="saveAddress" /> Bu adresi
+              sonraki siparişim için kaydet</label
+            >
+          }
+          @if (checkout.provider === 'iyzico' && !demoBadge) {
+            <label class="identity-field"
+              >T.C. kimlik numarası<input
+                name="identityNumber"
+                inputmode="numeric"
+                autocomplete="off"
+                maxlength="11"
+                required
+                [(ngModel)]="checkout.identityNumber"
+                placeholder="11 haneli numara"
+              /><small>Ödeme isteğine iletilir, Birmarket’te saklanmaz.</small></label
+            >
+          }
+          <div class="form-section-title payment-heading">
+            <span>2</span>
+            <div><strong>Ödeme yöntemi</strong><small>Güvenli sağlayıcını seç</small></div>
+          </div>
+          <div class="payment-options">
+            <label class="payment-option" [class.payment-selected]="checkout.provider === 'iyzico'"
+              ><input
+                type="radio"
+                name="provider"
+                value="iyzico"
+                [(ngModel)]="checkout.provider"
+              /><span class="radio-custom"></span
+              ><span class="payment-logo iyzico-logo">iyzico</span
+              ><span class="payment-option-copy"
+                ><strong>Kart ile ödeme</strong><small>Güvenli ödeme formu</small></span
+              ><span class="payment-check">✓</span></label
+            ><label class="payment-option" [class.payment-selected]="checkout.provider === 'paytr'"
+              ><input
+                type="radio"
+                name="provider"
+                value="paytr"
+                [(ngModel)]="checkout.provider"
+              /><span class="radio-custom"></span
+              ><span class="payment-logo paytr-logo">pay<span>TR</span></span
+              ><span class="payment-option-copy"
+                ><strong>Kart ile ödeme</strong><small>Taksit seçenekleriyle</small></span
+              ><span class="payment-check">✓</span></label
+            >
+          </div>
+          <div class="checkout-total-row">
+            <span>Ödenecek tutar</span
+            ><strong>{{ total | currency: 'TRY' : 'symbol' : '1.2-2' : 'tr-TR' }}</strong>
+          </div>
+          @if (errorMessage) {
+            <div class="inline-error" role="alert">{{ errorMessage }}</div>
+          }
+          <button class="button button-dark checkout-cta" type="submit" [disabled]="submitting">
+            {{ submitting ? 'Hazırlanıyor…' : 'Ödemeye geç' }} <span>↗</span>
+          </button>
+          <div class="secure-note"><span>◇</span> Ödeme bilgilerin güvenli şekilde işlenir</div>
+        </form>
+      }
+    </section>
+  }
+
+  @if (showAuth) {
+    <section
+      class="modal-card auth-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="auth-title"
+    >
+      <button class="close-button modal-close" aria-label="Kapat" (click)="showAuth = false">
+        ×
+      </button>
+      <div class="auth-emblem">✳</div>
+      <div class="eyebrow">Birmarket hesabın</div>
+      <h2 id="auth-title">
+        {{
+          authMode === 'login'
+            ? 'Yeniden hoş geldin.'
+            : authMode === 'register'
+              ? 'Aramıza hoş geldin.'
+              : authMode === 'forgot'
+                ? 'Parolanı yenile.'
+                : 'Yeni bir parola oluştur.'
+        }}
+      </h2>
+      <p>
+        {{
+          authMode === 'login'
+            ? 'Siparişlerini ve favorilerini burada bul.'
+            : authMode === 'register'
+              ? 'Favorilerini kaydet, siparişlerini kolayca takip et.'
+              : authMode === 'forgot'
+                ? 'Hesabın varsa parola yenileme bağlantısını e-posta ile gönderelim.'
+                : 'Parolan en az 10 karakter olmalı.'
+        }}
+      </p>
+      @if (authMode === 'register') {
+        <label class="auth-field"
+          >Ad soyad<input
+            name="registerName"
+            autocomplete="name"
+            [(ngModel)]="registerName"
+            placeholder="Adın ve soyadın" /></label
+        ><label class="auth-field"
+          >E-posta<input
+            name="registerEmail"
+            type="email"
+            autocomplete="email"
+            [(ngModel)]="registerEmail"
+            placeholder="ornek@eposta.com" /></label
+        ><label class="auth-field"
+          >Parola<input
+            name="registerPassword"
+            type="password"
+            autocomplete="new-password"
+            [(ngModel)]="registerPassword"
+            placeholder="En az 10 karakter"
+        /></label>
+      } @else if (authMode === 'login') {
+        <label class="auth-field"
+          >E-posta<input
+            name="loginEmail"
+            type="email"
+            autocomplete="email"
+            [(ngModel)]="loginEmail"
+            placeholder="ornek@eposta.com" /></label
+        ><label class="auth-field"
+          >Parola<input
+            name="loginPassword"
+            type="password"
+            autocomplete="current-password"
+            [(ngModel)]="loginPassword"
+            placeholder="Parolan" /></label
+        ><label class="remember-check"
+          ><input type="checkbox" [(ngModel)]="rememberMe" name="remember" /> Oturumum açık
+          kalsın</label
+        >
+        <button class="forgot-link" (click)="authMode = 'forgot'; authError = ''; authMessage = ''">
+          Parolamı unuttum
+        </button>
+      } @else if (authMode === 'forgot') {
+        <label class="auth-field"
+          >E-posta<input
+            name="forgotEmail"
+            type="email"
+            autocomplete="email"
+            [(ngModel)]="loginEmail"
+            placeholder="ornek@eposta.com"
+        /></label>
+      } @else {
+        <label class="auth-field"
+          >E-posta<input name="resetEmail" type="email" [ngModel]="resetEmail" readonly /></label
+        ><label class="auth-field"
+          >Yeni parola<input
+            name="newPassword"
+            type="password"
+            autocomplete="new-password"
+            [(ngModel)]="newPassword"
+            placeholder="En az 10 karakter"
+        /></label>
+      }
+      @if (authError) {
+        <div class="inline-error" role="alert">{{ authError }}</div>
+      }
+      @if (authMessage) {
+        <div class="auth-message" role="status">{{ authMessage }}</div>
+      }
+      <button
+        class="button button-dark auth-submit"
+        [disabled]="authSubmitting"
+        (click)="submitAuth()"
+      >
+        {{
+          authSubmitting
+            ? 'Bir saniye…'
+            : authMode === 'login'
+              ? 'Giriş yap'
+              : authMode === 'register'
+                ? 'Hesap oluştur'
+                : authMode === 'forgot'
+                  ? 'Yenileme bağlantısı gönder'
+                  : 'Parolayı güncelle'
+        }}
+        <span>↗</span>
+      </button>
+      @if (authMode === 'login' || authMode === 'register') {
+        <div class="auth-switch">
+          {{ authMode === 'login' ? 'Henüz hesabın yok mu?' : 'Zaten hesabın var mı?' }}
+          <button
+            (click)="
+              authMode = authMode === 'login' ? 'register' : 'login';
+              authError = '';
+              authMessage = ''
+            "
+          >
+            {{ authMode === 'login' ? 'Hesap oluştur' : 'Giriş yap' }}
+          </button>
+        </div>
+      } @else {
+        <div class="auth-switch">
+          <button (click)="authMode = 'login'; authError = ''; authMessage = ''">
+            Giriş sayfasına dön
+          </button>
+        </div>
+      }
+      @if (demoBadge && authMode === 'login') {
+        <div class="demo-credentials">
+          <strong>ÖRNEK HESAP</strong
+          ><span>{{
+            authMode === 'login'
+              ? 'customer@birmarket.local · DemoCustomer!234'
+              : 'Örnek ortamda yeni hesap da oluşturabilirsin.'
+          }}</span>
+        </div>
+      }
+    </section>
+  }
+
+  @if (selectedProduct) {
+    <section
+      class="modal-card product-detail-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="detail-title"
+    >
+      <button class="close-button modal-close" aria-label="Kapat" (click)="selectedProduct = null">
+        ×
+      </button>
+      <div class="detail-visual tone-{{ selectedProduct.imageTone }}">
+        <span>{{ productInitial(selectedProduct) }}</span
+        ><i></i><b></b>
+      </div>
+      <div class="product-category">{{ selectedProduct.category }}</div>
+      <h2 id="detail-title">{{ selectedProduct.name }}</h2>
+      <p>{{ selectedProduct.description }}</p>
+      <div class="detail-price">
+        {{ selectedProduct.price | currency: 'TRY' : 'symbol' : '1.2-2' : 'tr-TR' }}
+      </div>
+      <div class="detail-stock">
+        {{ selectedProduct.stock > 0 ? selectedProduct.stock + ' adet hazır' : 'Şu an stokta yok' }}
+      </div>
+      <button
+        class="button button-dark auth-submit"
+        [disabled]="selectedProduct.stock === 0"
+        (click)="addToCart(selectedProduct!); selectedProduct = null"
+      >
+        Sepete ekle <span>↗</span>
+      </button>
+    </section>
+  }
+
+  @if (toastMessage) {
+    <div class="toast-message" role="status"><span>✳</span>{{ toastMessage }}</div>
+  }
+</div>

@@ -1,0 +1,35 @@
+# Local configuration and credentials
+birmarket.env
+birmarket.env.local
+!.birmarket.env.example
+
+# Customer and demo data
+.data/
+*.sqlite
+*.sqlite3
+*.sqlite-shm
+*.sqlite-wal
+uploads/
+
+# .NET build output
+**/bin/
+**/obj/
+TestResults/
+.vs/
+
+# Node and Angular output
+**/node_modules/
+**/dist/
+**/.angular/
+**/coverage/
+**/playwright-report/
+**/test-results/
+infrastructure/azure/main.json
+
+# Local tooling
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.user
+*.suo

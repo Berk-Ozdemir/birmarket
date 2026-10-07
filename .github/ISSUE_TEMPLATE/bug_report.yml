@@ -1,0 +1,46 @@
+name: Bug report
+description: Report a reproducible problem in Birmarket.
+title: "bug: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: Share sanitized details only. Do not attach passwords, provider tokens, customer records, or SQLite files.
+  - type: input
+    id: version
+    attributes:
+      label: Commit or version
+      placeholder: Commit SHA or release tag
+    validations:
+      required: true
+  - type: dropdown
+    id: mode
+    attributes:
+      label: Runtime mode
+      options:
+        - Local demo
+        - Docker / WSL 2 demo
+        - Real provider sandbox
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Include sanitized commands and data.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: Remove tokens, addresses, emails, and personal details from logs.
+    validations:
+      required: true

@@ -1,0 +1,37 @@
+{
+  "name": "birmarket-web",
+  "version": "0.0.0",
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve --host 127.0.0.1 --proxy-config proxy.conf.json",
+    "build": "ng build",
+    "format:check": "prettier --check src/app/*.ts src/app/*.html src/app/*.css src/main.ts src/styles.css playwright.config.ts playwright/*.ts",
+    "watch": "ng build --watch --configuration development",
+    "test": "ng test --watch=false",
+    "e2e": "playwright test",
+    "e2e:web": "ng serve --host 127.0.0.1 --port 4210 --proxy-config proxy.e2e.conf.json",
+    "e2e:install": "playwright install chromium"
+  },
+  "private": true,
+  "packageManager": "npm@11.19.1",
+  "dependencies": {
+    "@angular/common": "^22.1.0",
+    "@angular/compiler": "^22.1.0",
+    "@angular/core": "^22.1.0",
+    "@angular/forms": "^22.1.0",
+    "@angular/platform-browser": "^22.1.0",
+    "@angular/router": "^22.1.0",
+    "rxjs": "~7.8.0",
+    "tslib": "^2.3.0"
+  },
+  "devDependencies": {
+    "@angular/build": "^22.1.8",
+    "@angular/cli": "^22.1.8",
+    "@angular/compiler-cli": "^22.1.0",
+    "@playwright/test": "^1.63.0",
+    "jsdom": "^28.0.0",
+    "prettier": "^3.8.1",
+    "typescript": "~6.0.2",
+    "vitest": "^4.0.8"
+  }
+}
