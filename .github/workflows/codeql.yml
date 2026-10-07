@@ -16,6 +16,14 @@ jobs:
   analyze:
     if: github.event.repository.private == false
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - language: csharp
+            build-mode: manual
+          - language: javascript-typescript
+            build-mode: none
     permissions:
       actions: read
       contents: read
@@ -23,10 +31,24 @@ jobs:
     steps:
       - name: Check out source
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Set up .NET
+        if: matrix.language == 'csharp'
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: 10.0.x
       - name: Initialize CodeQL
         uses: github/codeql-action/init@88585263c0627ee42c0e1c5143a112c8d6f4aa18 # v4.38.2
         with:
-          languages: csharp, javascript-typescript
+          languages: ${{ matrix.language }}
+          build-mode: ${{ matrix.build-mode }}
           queries: security-extended
+      - name: Restore .NET dependencies
+        if: matrix.language == 'csharp'
+        run: dotnet restore Birmarket.sln
+      - name: Build .NET source for analysis
+        if: matrix.language == 'csharp'
+        run: dotnet build Birmarket.sln --configuration Release --no-restore
       - name: Analyze source
         uses: github/codeql-action/analyze@88585263c0627ee42c0e1c5143a112c8d6f4aa18 # v4.38.2
+        with:
+          category: /language:${{ matrix.language }}
