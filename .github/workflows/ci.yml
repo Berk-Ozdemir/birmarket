@@ -82,10 +82,10 @@ jobs:
           node-version: 24
           cache: npm
           cache-dependency-path: frontend/birmarket-web/package-lock.json
-      - name: Install browser dependencies
+      - name: Install Playwright browser
         run: |
           npm ci
-          npx playwright install --with-deps chromium
+          npx playwright install chromium
       - name: Run browser tests
         run: npm run e2e
 
