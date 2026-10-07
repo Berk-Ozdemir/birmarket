@@ -131,7 +131,7 @@ public partial class Program
         {
             var exception = context.Features.Get<Microsoft.AspNetCore.Diagnostics.IExceptionHandlerFeature>()?.Error;
             if (exception is not null)
-                context.RequestServices.GetRequiredService<ILogger<Program>>().LogError(exception, "Unhandled API error for {Method} {Path}", context.Request.Method, context.Request.Path);
+                context.RequestServices.GetRequiredService<ILogger<Program>>().LogError(exception, "Unhandled API error");
             context.Response.StatusCode = StatusCodes.Status500InternalServerError;
             context.Response.ContentType = "application/problem+json";
             await context.Response.WriteAsJsonAsync(new { title = "İşlem tamamlanamadı.", status = 500 });
