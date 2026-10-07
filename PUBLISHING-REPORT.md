@@ -7,7 +7,7 @@ This document records the pre-publication review. The target repo's visibility h
 - Target: [`berk-ozdemir/birmarket`](https://github.com/berk-ozdemir/birmarket)
 - Default branch: `dev`
 - Published source: the reviewed `dev` branch tip
-- Publication sequence: keep the repo private through source, workflow, and branch-rule verification; change visibility to public as the final repository-setting action.
+- Publication sequence: keep the repo private through source and workflow verification; then make it public and immediately apply the branch/security controls available to a public repo on GitHub Free before final read-only verification.
 
 ## Source verification
 
@@ -26,8 +26,8 @@ This document records the pre-publication review. The target repo's visibility h
 - `dev` is the default branch. Issues are enabled; Projects and Wiki are disabled. Squash merge is the only enabled merge method, and merged branches are deleted.
 - Dependabot runs weekly. Automatic major-version updates are ignored; patch/minor updates remain enabled. Automatically opened major upgrade pull requests were closed with an explanation and were not merged.
 - The `berk-ozdemir` identity was verified through GitHub CLI, then the account active before login was restored. No other GitHub login was removed or logged out.
-- Protected `dev` branch rules are verified before the public visibility change. CodeQL is configured for the public repository workflow; its private-repository run is intentionally skipped.
+- GitHub Free does not allow branch protection for this private personal repository. The protection endpoint returned HTTP 403 and stated the repository must be public or upgraded. Apply protected `dev` and public-repository secret protection immediately after the visibility change. CodeQL is configured for public repositories; private-repository runs are intentionally skipped.
 
 ## Final publication
 
-The source branch is prepared for public release at the target URL above. Perform final read-only checks of public accessibility, default/protected `dev`, and the CI/CodeQL runs after the visibility change. Do not add source changes or create a release tag as part of the visibility transition.
+The source branch is prepared for public release at the target URL above. In the final publication sequence, change visibility, apply GitHub Free's public-repository branch and secret protection settings, and then perform read-only checks of public accessibility, default/protected `dev`, and CI/CodeQL. Do not add source changes or create a release tag as part of the visibility transition.
