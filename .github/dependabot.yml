@@ -4,6 +4,10 @@ updates:
     directory: /frontend/birmarket-web
     schedule:
       interval: weekly
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - version-update:semver-major
     groups:
       angular-and-tooling:
         patterns:
@@ -13,14 +17,26 @@ updates:
     directory: /backend/Birmarket.Api
     schedule:
       interval: weekly
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - version-update:semver-major
   - package-ecosystem: nuget
     directory: /tests/Birmarket.Tests
     schedule:
       interval: weekly
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - version-update:semver-major
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: weekly
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - version-update:semver-major
     groups:
       github-actions:
         patterns:
