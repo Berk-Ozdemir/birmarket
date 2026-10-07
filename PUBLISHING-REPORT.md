@@ -12,10 +12,15 @@ Publication tool: locally installed GitHub CLI (`gh`) only.
 
 ## Pre-publication record
 
-- Initial Git history: not created yet.
-- Source checks: record command, result, and commit at publication time.
-- Secret and generated-file review: record the reviewed commit and result before publication.
-- Repository preparation: record the authenticated repo inspection, branch rules, security settings, and workflow runs.
+- Local source branch: `dev`.
+- Reviewed application commit: `fe41a045915668d5b94e31f8591d4d5eca045eac`.
+- .NET formatting and tests: passed; 12 integration tests.
+- Angular formatting, production build, and unit tests: passed; 5 unit tests.
+- Playwright browser suite: passed; 7 applicable desktop/mobile cases, with 3 viewport-specific skips.
+- Dependency checks: `npm audit --audit-level=high` found no vulnerabilities; .NET reported no vulnerable packages.
+- Infrastructure and packaging: Bicep build, PowerShell parser, Docker build, and local readiness/storefront smoke checks passed.
+- Secret and generated-file review: no known credential patterns were found in staged source. `birmarket.env`, local SQLite data, dependencies, and build output are ignored.
+- Repository preparation: local Git history created on `dev`; no remote configured and no GitHub account state changed. Remote inspection, branch rules, GitHub workflow runs, and public verification remain pending the final publication stage.
 
 ## Publication execution record
 
